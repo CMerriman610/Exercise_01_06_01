@@ -43,13 +43,42 @@ function updateDays() {
     if (deliveryYear.selectedIndex === -1) {
         deliveryDay.selectedIndex = 0;
     }
+    //If Feb and 2020, 29
+    if (selectedMonth === '2' && deliveryYear.options[deliveryYear.selectedIndex].value === '2020') {
+        deliveryDay.appendChild(twentyNine.cloneNode(true));
+    }
+    //Else if 30 day month, 30
+    else if (selectedMonth === '4' || selectedMonth === '6' || selectedMonth === '9' || selectedMonth === '11') {
+        deliveryDay.appendChild(thirty.cloneNode(true));        
+    }
+    //Else if 31 day month, 31
+    else if (selectedMonth === '1' || selectedMonth === '3' || selectedMonth === '5' || selectedMonth === '7' || selectedMonth === '8' || selectedMonth === '10' || selectedMonth === '12') {
+        deliveryDay.appendChild(thirtyOne.cloneNode(true));
+    }
 }
 
 //Function that sets up page on a load event
 function setUpPage() {
     removeSelectDefaults();
+    setUpDays();
+    createEventListeners();
 }
 
+//Function to create our event listeners
+function createEventListeners() {
+    var deliveryMonth = document.getElementById('delivMo');
+    if (deliveryMonth.addEventListener) {
+        deliveryMonth.addEventListener('change', updateDays, false);
+    } else if  (deliveryMonth.attachEvent){ 
+        deliveryMonth.attachEvent('onchange', updateDays);
+    }
+    var deliveryYear = document.getElementById('delivYr');
+    if (deliveryYear.addEventListener) {
+        deliveryYear.addEventListener('change', updateDays, false);
+    } else if  (deliveryYear.attachEvent){ 
+        deliveryYear.attachEvent('onchange', updateDays);
+    }
+}
 
 //Page load event handlers
 if (window.addEventListener) {
