@@ -37,6 +37,10 @@ function updateDays() {
     var dates = deliveryDay.getElementsByTagName('option');
     var deliveryMonth = document.getElementById('delivMo');
     var deliveryYear = document.getElementById('delivYr');
+    //Cover for no month selected
+    if (deliveryMonth.selectedIndex === -1) {
+        return;
+    }
     var selectedMonth = deliveryMonth.options[deliveryMonth.selectedIndex].value;
     while (dates[28]) {
         deliveryDay.removeChild(dates[28]);
@@ -118,7 +122,7 @@ function validateAddress(fieldsetId) {
             currentElement.style.border = '1px solid red';
             fieldsetValidity = false;
         } else {
-            currentElement.style.border = '';
+            currentElement.style.border = '1px solid black';
         }
         //Action for invalid fieldset
         if (fieldsetValidity === false) {
@@ -129,6 +133,86 @@ function validateAddress(fieldsetId) {
             else {
                 throw 'Please complete all Delivery Address information.';
             }
+        }
+        else {
+            errorDiv.style.display = 'none';
+            errorDiv.innerHTML = '';
+        }
+    }
+    catch(msg) {
+        errorDiv.style.display = 'block';
+        errorDiv.innerHTML = msg;
+        formValidity = false;
+    }
+}
+
+//Function to validate delivery date
+function validateDeliveryDate() {
+    var selectElements = document.querySelectorAll('#deliveryDate' +  ' select');
+    var errorDiv = document.querySelectorAll('#deliveryDate' +  ' .errorMessage')[0];
+    var fieldsetValidity = true;
+    var elementCount = selectElements.length;
+    var currentElement;
+    try {
+        //Loop through input fields looking for blanks
+        for (var i = 0; i < elementCount; i++) {
+            currentElement = selectElements[i];
+            //Blanks
+            if (currentElement.selectedIndex === -1) {
+                currentElement.style.border = '1px solid red'
+                fieldsetValidity = false;
+            }
+            //Not blanks
+            else {
+                currentElement.style.border = '1px solid black';
+            }
+        }
+        //Validate select list field
+        //Action for invalid fieldset
+        if (fieldsetValidity === false) {
+            throw 'Please specifiy a delivery date.';
+        }
+        else {
+            errorDiv.style.display = 'none';
+            errorDiv.innerHTML = '';
+        }
+    }
+    catch(msg) {
+        errorDiv.style.display = 'block';
+        errorDiv.innerHTML = msg;
+        formValidity = false;
+    }
+}
+
+//Function to validate payment
+function validateDeliveryDate() {
+    var errorDiv = document.querySelectorAll('#deliveryDate' +  ' .errorMessage')[0];
+    var fieldsetValidity = true;
+    var ccNumElement = document.getElementById('ccNum');
+    var selectElements = document.querySelectorAll('#paymentInfo' +  ' select');
+    var elementCount = selectElements.length;
+    var cvvElement = document.getElementById('cvv');
+    var cards = document.getElementsByName('PaymentType');
+    //End of 8.14
+    var currentElement;
+    try {
+        //Loop through input fields looking for blanks
+        for (var i = 0; i < elementCount; i++) {
+            currentElement = selectElements[i];
+            //Blanks
+            if (currentElement.selectedIndex === -1) {
+                currentElement.style.border = '1px solid red'
+                fieldsetValidity = false;
+            }
+            //Not blanks
+            else {
+                currentElement.style.border = '1px solid black';
+            }
+        }
+        //Validate select list field
+        //Action for invalid fieldset
+        if (fieldsetValidity === false) {
+            throw 'Please specifiy a delivery date.';
         }
         else {
             errorDiv.style.display = 'none';
@@ -153,6 +237,7 @@ function validateForm(evt) {
 
     validateAddress('billingAddress');
     validateAddress('deliveryAddress');
+    validateDeliveryDate();
     
     if (formValidity === true) { //Form is valid
         document.getElementById('errorText').innerHTML = '';
