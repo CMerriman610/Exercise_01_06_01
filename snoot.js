@@ -184,9 +184,32 @@ function validateDeliveryDate() {
     }
 }
 
+//Function to validate custom message
+function validateMessage() {
+    var msgBox = document.getElementById('customText');
+    var errorDiv = document.querySelectorAll('#message' +  ' .errorMessage')[0];
+    var fieldsetValidity = true;
+    try {
+        //Validate checkbox and textarea message
+        if (document.getElementById('custom').checked && (msgBox.value === '' || msgBox.value === msgBox.placeholder)) {
+            throw 'Please enter your custom message text.'
+        } else {
+            errorDiv.style.display = 'none';
+            errorDiv.innerHTML = '';
+            msgBox.style.background = 'white';
+        }
+    }
+    catch(msg) {
+        errorDiv.style.display = 'block';
+        errorDiv.innerHTML = msg;
+        msgBox.style.background = 'rgb(255, 233, 233)';
+        formValidity = false;
+    }
+}
+
 //Function to validate payment
-function validateDeliveryDate() {
-    var errorDiv = document.querySelectorAll('#deliveryDate' +  ' .errorMessage')[0];
+function validatePayment() {
+    var errorDiv = document.querySelectorAll('#paymentInfo' +  ' .errorMessage')[0];
     var fieldsetValidity = true;
     var ccNumElement = document.getElementById('ccNum');
     var selectElements = document.querySelectorAll('#paymentInfo' +  ' select');
@@ -196,7 +219,26 @@ function validateDeliveryDate() {
     //End of 8.14
     var currentElement;
     try {
-        //Loop through input fields looking for blanks
+        //Validate radio buttons - one must be on
+        if (!cards[0].checked && !cards[1].checked && !cards[2].checked && !cards[3].checked) {
+            for (var i = 0; i < cards.length; i++) {
+                cards[i].style.outline = '1px solid red';
+            }
+            fieldsetValidity = false;
+        }
+        else {
+            for (var i = 0; i < cards.length; i++) {
+                cards[i].style.outline = '1px solid black';
+            }
+        }
+        //Validate req'd card #
+        if (ccNumElement.value === '') {
+            ccNumElement.style.background = 'rgb(255, 233, 233)';
+            formValidity = false;
+        }
+        else {
+            ccNumElement.style.background = 'white';
+        }
         for (var i = 0; i < elementCount; i++) {
             currentElement = selectElements[i];
             //Blanks
@@ -209,10 +251,17 @@ function validateDeliveryDate() {
                 currentElement.style.border = '1px solid black';
             }
         }
-        //Validate select list field
+        //Validate CVV number
+        if (cvvElement.value === '') {
+            cvvElement.style.background = 'rgb(255, 233, 233)';
+            formValidity = false;
+        }
+        else {
+            cvvElement.style.background = 'white';
+        }
         //Action for invalid fieldset
         if (fieldsetValidity === false) {
-            throw 'Please specifiy a delivery date.';
+            throw 'Please complete all payment info.'
         }
         else {
             errorDiv.style.display = 'none';
@@ -238,6 +287,8 @@ function validateForm(evt) {
     validateAddress('billingAddress');
     validateAddress('deliveryAddress');
     validateDeliveryDate();
+    validatePayment();
+    validateMessage();
     
     if (formValidity === true) { //Form is valid
         document.getElementById('errorText').innerHTML = '';
