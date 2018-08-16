@@ -207,6 +207,52 @@ function validateMessage() {
     }
 }
 
+//Function to validate create account
+function validateCreateAccount() {
+    var errorDiv = document.querySelectorAll('#createAccount' +  ' .errorMessage')[0];
+    var usernameElement = document.getElementById('username');
+    var pass1Element = document.getElementById('pass1');
+    var pass2Element = document.getElementById('pass2');
+    var fieldsetValidity = true;
+    var invColor = 'rgb(255,233,233)';
+    var passwordMismatch = false;
+    usernameElement.style.background = 'white';
+    pass1Element.style.background = 'white';
+    pass2Element.style.background = 'white';
+    errorDiv.style.display = 'none';
+    errorDiv.innerHTML = '';
+    try {
+        if (usernameElement.value !== '' && pass1Element.value !== '' && pass2Element.value !== '') {
+            //1+ fields has data
+            if (pass1Element.value !== pass2Element.value) {
+                //Verify password match
+                fieldsetValidity = false;
+                passwordMismatch = true;
+                throw 'Passwords entered do not match, please re-enter.';
+            }
+        }
+        else if (usernameElement.value === '' && pass1Element.value === '' && pass2Element.value === '') {
+            //No fields have data
+            fieldsetValidity = true;
+            passwordMismatch = false;
+        } else {
+            fieldsetValidity = false;
+            throw 'Please enter all fields to create account.'
+        }
+    } catch (msg) {
+        errorDiv.style.display = 'block';
+        errorDiv.innerHTML = msg;
+        pass1Element.style.background = invColor;
+        pass2Element.style.background = invColor;
+        formValidity = false;
+        if (passwordMismatch) {
+            usernameElement.style.background = 'white';
+        } else {
+            usernameElement.style.background = invColor;
+        }
+    }
+}
+
 //Function to validate payment
 function validatePayment() {
     var errorDiv = document.querySelectorAll('#paymentInfo' +  ' .errorMessage')[0];
@@ -289,6 +335,7 @@ function validateForm(evt) {
     validateDeliveryDate();
     validatePayment();
     validateMessage();
+    validateCreateAccount();
     
     if (formValidity === true) { //Form is valid
         document.getElementById('errorText').innerHTML = '';
